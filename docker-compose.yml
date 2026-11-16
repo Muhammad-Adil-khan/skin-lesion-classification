@@ -1,0 +1,29 @@
+# Start everything:   docker compose up --build
+# Then open:          http://localhost:8501   (API docs: http://localhost:8000/docs)
+#
+# Optional settings go in a file named .env next to this one, for example:
+#   SKIN_API_KEY=some-long-random-string
+services:
+  backend:
+    build: ./backend
+    # Bound to localhost only. Put a reverse proxy with HTTPS in front before exposing it (see README).
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      SKIN_API_KEY: ${SKIN_API_KEY:-}
+      SKIN_RESIZE_METHOD: ${SKIN_RESIZE_METHOD:-tf_bilinear}
+      SKIN_RATE_LIMIT_PER_MINUTE: ${SKIN_RATE_LIMIT_PER_MINUTE:-60}
+      SKIN_MIN_CONFIDENCE: ${SKIN_MIN_CONFIDENCE:-0.5}
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:8501:8501"
+    environment:
+      SKIN_API_BASE_URL: http://backend:8000
+      SKIN_API_KEY: ${SKIN_API_KEY:-}
+    depends_on:
+      backend:
+        condition: service_healthy  # wait until the model is loaded
+    restart: unless-stopped

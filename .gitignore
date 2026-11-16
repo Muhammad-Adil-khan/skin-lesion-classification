@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+
+# Labeled test images are health data and may be licensed: keep them out of git by default
+backend/tests/fixtures/labeled/*
+!backend/tests/fixtures/labeled/.gitkeep

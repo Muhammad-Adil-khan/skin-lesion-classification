@@ -1,0 +1,42 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.lock
+      - run: pip install -r requirements.lock
+      - run: pip install -r requirements-dev.txt
+      # If backend/models/best_model.keras is not in the repository, the tests build a tiny
+      # stand-in model automatically and skip the tests that need the real one.
+      - run: python -m pytest -v
+        env:
+          TF_CPP_MIN_LOG_LEVEL: "2"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: frontend/requirements.lock
+      - run: pip install -r requirements.lock
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -v

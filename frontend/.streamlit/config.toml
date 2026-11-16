@@ -1,0 +1,7 @@
+# Streamlit settings for this project.
+# Streamlit reads this file from the folder you run `streamlit run` in (so run it from frontend/).
+
+[server]
+# Don't ask for an email address on first run (that prompt is Streamlit's own onboarding
+# question and is not part of this app). The browser still opens automatically.
+showEmailPrompt = false
